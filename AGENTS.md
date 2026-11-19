@@ -1,32 +1,36 @@
-# Cloudflare Workers
+# LifeNest – Project rules
+
+Read `ARCHITECTURE.md` first. It lists the project decisions (stack, environments, database, workflow) and the rules for coding agents. Do not change those decisions without asking.
+
+## Cloudflare Workers
 
 STOP. Your knowledge of Cloudflare Workers APIs and limits may be outdated. Always retrieve current documentation before any Workers, KV, R2, D1, Durable Objects, Queues, Vectorize, AI, or Agents SDK task.
 
-## Docs
+### Docs
 
-- https://developers.cloudflare.com/workers/
+- [Cloudflare Workers Docs](https://developers.cloudflare.com/workers/)
 - MCP: `https://docs.mcp.cloudflare.com/mcp`
 
 For all limits and quotas, retrieve from the product's `/platform/limits/` page. eg. `/workers/platform/limits`
 
-## Commands
+### Commands
 
 | Command | Purpose |
-|---------|---------|
+| --------- | --------- |
 | `npx wrangler dev` | Local development |
 | `npx wrangler deploy` | Deploy to Cloudflare |
 | `npx wrangler types` | Generate TypeScript types |
 
 Run `wrangler types` after changing bindings in wrangler.jsonc.
 
-## Local Explorer (Debugging & Inspection)
+### Local Explorer (Debugging & Inspection)
 
 When running `npx wrangler dev`, a Local Explorer API is available for inspecting and debugging local Workers, bindings, and storage state. The API base URL is printed in the terminal when the dev server starts.
 
 Key endpoints (relative to the dev server URL):
 
 | Endpoint | Description |
-|----------|-------------|
+| ---------- | ------------- |
 | `GET /cdn-cgi/local/explorer/api/local/workers` | List local Workers and their bindings |
 | `GET /cdn-cgi/local/explorer/api/storage/kv/namespaces` | List KV namespaces |
 | `GET /cdn-cgi/local/explorer/api/d1/database` | List D1 databases |
@@ -40,23 +44,23 @@ If the routes above don't cover what you need, fetch the full OpenAPI schema (la
 
 Use the Local Explorer to debug issues by inspecting storage state (KV keys, D1 rows, R2 objects, DO storage), viewing Worker bindings, and querying request traces and logs captured during the dev session.
 
-## Node.js Compatibility
+### Node.js Compatibility
 
-https://developers.cloudflare.com/workers/runtime-apis/nodejs/
+[Cloudflare Workers Node.js Compatibility](https://developers.cloudflare.com/workers/runtime-apis/nodejs/)
 
-## Errors
+### Errors
 
 - **Error 1102** (CPU/Memory exceeded): Retrieve limits from `/workers/platform/limits/`
-- **All errors**: https://developers.cloudflare.com/workers/observability/errors/
+- **All errors**: [Cloudflare Workers Errors](https://developers.cloudflare.com/workers/observability/errors/)
 
-## Product Docs
+### Product Docs
 
 Retrieve API references and limits from:
 `/kv/` · `/r2/` · `/d1/` · `/durable-objects/` · `/queues/` · `/vectorize/` · `/workers-ai/` · `/agents/`
 
-## Best Practices (conditional)
+### Best Practices (conditional)
 
 If the application uses Durable Objects or Workflows, refer to the relevant best practices:
 
-- Durable Objects: https://developers.cloudflare.com/durable-objects/best-practices/rules-of-durable-objects/
-- Workflows: https://developers.cloudflare.com/workflows/build/rules-of-workflows/
+- Durable Objects: [Rules of Durable Objects](https://developers.cloudflare.com/durable-objects/best-practices/rules-of-durable-objects/)
+- Workflows: [Rules of Workflows](https://developers.cloudflare.com/workflows/build/rules-of-workflows/)
