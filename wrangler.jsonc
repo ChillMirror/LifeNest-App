@@ -22,6 +22,23 @@
 		"crons": [
 			"*/5 * * * *"
 		]
+	},
+	"env": {
+		"dev": {
+			"name": "lifenest-app-dev",
+			"triggers": {
+				"crons": [
+					"*/5 * * * *"
+				]
+			},
+			"d1_databases": [
+				{
+					"binding": "DB",
+					"database_name": "lifenest-db-dev",
+					"database_id": "5e15b865-bfce-4e26-b588-5bd5f6673664"
+				}
+			]
+		}
 	}
 	/**
 	 * Smart Placement
