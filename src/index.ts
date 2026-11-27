@@ -1,4 +1,28 @@
+import { type Bot, webhookCallback } from 'grammy';
+import type { BotContext } from './commands/start';
+import { findUserStateByTgId } from './db/users';
 import { verifyWebhookSecret } from './lib/webhookSecret';
+import { createBot } from './telegram/bot';
+
+let bot: Bot<BotContext> | undefined;
+let handleWebhook: ((request: Request) => Promise<Response>) | undefined;
+let activeDb: D1Database | undefined;
+
+function getWebhookHandler(env: Env): (request: Request) => Promise<Response> {
+	activeDb = env.DB;
+
+	if (!bot || !handleWebhook) {
+		bot = createBot(env.TELEGRAM_BOT_TOKEN, (tgId) => {
+			if (!activeDb) {
+				throw new Error('D1 database binding is not available');
+			}
+			return findUserStateByTgId(activeDb, tgId);
+		});
+		handleWebhook = webhookCallback(bot, 'cloudflare-mod');
+	}
+
+	return handleWebhook;
+}
 
 export default {
 	async fetch(request, env, ctx): Promise<Response> {
@@ -14,7 +38,14 @@ export default {
 			return new Response('Forbidden', { status: 403 });
 		}
 
-		return new Response('OK', { status: 200 });
+		try {
+			const handler = getWebhookHandler(env);
+			return await handler(request);
+		} catch (err) {
+			const message = err instanceof Error ? `${err.name}: ${err.message}` : 'Unknown error';
+			console.error(`Unhandled webhook error: ${message}`);
+			return new Response('OK', { status: 200 });
+		}
 	},
 
 	async scheduled(controller, env, ctx): Promise<void> {
